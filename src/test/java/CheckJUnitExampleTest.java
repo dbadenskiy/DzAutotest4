@@ -15,7 +15,7 @@ public class CheckJUnitExampleTest {
         Configuration.pageLoadStrategy = "eager";
         Configuration.browserSize = "1474x822";
         Configuration.timeout = 5000;
-        Configuration.holdBrowserOpen = true;
+        Configuration.holdBrowserOpen = false;
     }
 
     @Test
@@ -30,7 +30,18 @@ public class CheckJUnitExampleTest {
         $("#wiki-pages-filter").setValue("SoftAssertions");
         $("#wiki-pages-box").shouldHave(text("SoftAssertions"));
         $("#wiki-pages-box").$(byText("SoftAssertions")).click();
-        $("#wiki-content").shouldHave(text("3. Using JUnit5 extend test class:"));
+        $("#wiki-content").shouldHave(text("""
+                @ExtendWith({SoftAssertsExtension.class})
+                class Tests {
+                    @Test
+                    void test() {
+                        Configuration.assertionMode = SOFT;
+                        open("page.html");
 
+                        $("#first").should(visible).click();
+                        $("#second").should(visible).click();
+                    }
+                } 
+                """));
     }
 }
